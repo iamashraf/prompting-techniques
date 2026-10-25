@@ -126,6 +126,9 @@ Tests are fast and network-free — they never call the model.
 - [ReAct](docs/react-findings.md) — the only technique where the total
   is correct by construction, not by luck — at the cost of writing and
   securing real code instead of just a better prompt.
+- [Parameter Tuning](docs/parameter-tuning-findings.md) — high
+  temperature doesn't just add noise, it fabricates facts with full
+  confidence; max_tokens is a hard requirement, not a cosmetic knob.
 
 ## Layout
 
@@ -152,6 +155,7 @@ src/prompting_techniques/
     prompt_chaining.py             # a 4-step pipeline instead of one call
     structured_output.py           # JSON schema output, verified with plain Python
     react.py                       # Thought/Action/Observation with a real calculator tool
+    parameter_tuning.py            # one-variable-at-a-time sweep: temperature, max_tokens, top_p
 tests/
 ```
 

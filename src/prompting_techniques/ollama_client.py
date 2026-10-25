@@ -18,6 +18,8 @@ def ask_ollama(
     model: str = DEFAULT_MODEL,
     temperature: float = 0.0,
     format: dict | str | None = None,
+    max_tokens: int | None = None,
+    top_p: float | None = None,
 ) -> str:
     print(f"--- sending to {model} (temperature={temperature}) ---")
     if system is not None:
@@ -29,10 +31,16 @@ def ask_ollama(
         messages.append({"role": "system", "content": system})
     messages.append({"role": "user", "content": user})
 
+    options = {"temperature": temperature}
+    if max_tokens is not None:
+        options["num_predict"] = max_tokens  # Ollama's name for max_tokens
+    if top_p is not None:
+        options["top_p"] = top_p
+
     payload = {
         "model": model,
         "messages": messages,
-        "options": {"temperature": temperature},
+        "options": options,
         "stream": False,
     }
     if format is not None:
