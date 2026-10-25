@@ -78,12 +78,23 @@ These make real calls to your local model and can take a few minutes.
 
 ### Comparing techniques
 
-Once two or more techniques exist, `judge.py` scores their baseline
-reports side by side (same 1-5 rubric the course used: Completeness,
-Business Reasoning, Structure, Actionability, Executive Readiness):
+`judge.py` scores techniques against each other on a rubric
+(Groundedness, Completeness, Business Reasoning, Structure,
+Actionability, Executive Readiness). Asking it to score several
+reports in one pass turned out to be unreliable — it silently drops
+some and loses track of labels (see docs/one-shot-findings.md) — so it
+judges one pair at a time instead, each technique against the one
+immediately before it in the escalation:
 
 ```bash
 uv run python -m prompting_techniques.judge
+```
+
+For testing techniques against the real, larger course dataset instead
+of the small synthetic one (bring your own CSV — see below):
+
+```bash
+uv run python scripts/compare_at_scale.py
 ```
 
 ### Running tests
@@ -104,19 +115,22 @@ Tests are fast and network-free — they never call the model.
   that mattered more than the technique itself.
 - [Chain-of-Thought](docs/chain-of-thought-findings.md) — the first
   technique that actually fixed the arithmetic problem.
+- [Tree-of-Thought](docs/tree-of-thought-findings.md) — better-justified
+  mitigation choices, but that discipline didn't carry over to arithmetic.
 
 ## Layout
 
 ```
 docker-compose.yml                 # optional local Ollama, sharing research-assistant's model volume
 scripts/ensure_ollama.sh           # starts Ollama only if nothing's already running
-data/                              # shared example scenario (CSV)
+scripts/compare_at_scale.py        # re-runs the comparison against the real, larger dataset
+data/                              # shared example scenario: 6-event synthetic CSV (+ bring-your-own real one)
 runs/                              # generated prompt+response logs (gitignored)
 src/prompting_techniques/
   scenario.py                      # loads the data, builds the shared business_context text
   run_log.py                       # persists every prompt+response under runs/
   ollama_client.py                 # the one shared call to a local Ollama model
-  judge.py                         # LLM-as-judge: scores techniques' reports side by side
+  judge.py                         # LLM-as-judge: scores techniques' reports pairwise
   techniques/
     zero_shot.py                   # the technique itself
     zero_shot_experiments.py       # hands-on experiments exploring its nuances
@@ -124,6 +138,7 @@ src/prompting_techniques/
     one_shot_experiments.py        # experiments specific to adding an example
     few_shot.py                    # zero-shot + several worked examples
     chain_of_thought.py            # reason step by step, then write the report
+    tree_of_thought.py             # generate multiple options, evaluate, then pick one
 tests/
 ```
 

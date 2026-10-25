@@ -18,3 +18,9 @@ config.json
 
 # Generated run logs (prompt + response per run) -- not source
 runs/
+
+# Real course dataset: third-party course material, bring-your-own
+data/supply_chain_disruptions_100_events.csv
+
+# macOS Finder metadata
+.DS_Store

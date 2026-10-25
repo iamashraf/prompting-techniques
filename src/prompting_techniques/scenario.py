@@ -10,14 +10,21 @@ from pathlib import Path
 
 DATA_FILE = Path(__file__).resolve().parents[2] / "data" / "supply_chain_events.csv"
 
+# The real course dataset (100 rows, 26 columns) -- richer and far
+# larger than the 6-event synthetic one above. Opt in via load_events's
+# csv_path/limit params; the default stays the small synthetic set so
+# every existing finding stays reproducible exactly as written.
+REAL_DATA_FILE = Path(__file__).resolve().parents[2] / "data" / "supply_chain_disruptions_100_events.csv"
+
 # str.title() capitalizes every word, including acronym letters ("usd" -> "Usd").
-# This maps the few column-name acronyms we have back to how they should read.
-ACRONYM_OVERRIDES = {"Usd": "USD"}
+# This maps the column-name acronyms we have back to how they should read.
+ACRONYM_OVERRIDES = {"Usd": "USD", "Otd": "OTD", "Doh": "DOH", "Skus": "SKUs"}
 
 
-def load_events(csv_path: Path = DATA_FILE) -> list[dict[str, str]]:
+def load_events(csv_path: Path = DATA_FILE, limit: int | None = None) -> list[dict[str, str]]:
     with csv_path.open(newline="") as f:
-        return list(csv.DictReader(f))
+        events = list(csv.DictReader(f))
+    return events[:limit] if limit is not None else events
 
 
 def _label(column: str) -> str:

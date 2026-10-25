@@ -82,8 +82,8 @@ Assessment Report.
 """.strip()
 
 
-def run(temperature: float = 0.0) -> str:
-    business_context = build_business_context(load_events())
+def run(temperature: float = 0.0, events: list[dict[str, str]] | None = None) -> str:
+    business_context = build_business_context(events if events is not None else load_events())
     user_prompt = USER_PROMPT_TEMPLATE.format(
         reference_example=REFERENCE_EXAMPLE,
         business_context=business_context,

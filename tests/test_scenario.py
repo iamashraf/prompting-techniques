@@ -1,4 +1,6 @@
-from prompting_techniques.scenario import build_business_context, load_events
+import pytest
+
+from prompting_techniques.scenario import REAL_DATA_FILE, build_business_context, load_events
 
 
 def test_build_business_context_formats_each_event_as_a_labeled_block():
@@ -29,3 +31,19 @@ def test_build_business_context_keeps_known_acronyms_upper_case():
 
     assert "Revenue At Risk USD: 100" in context
     assert "Usd" not in context
+
+
+def test_load_events_limit_truncates_to_the_first_n_rows():
+    events = load_events(limit=2)
+
+    assert len(events) == 2
+    assert events == load_events()[:2]
+
+
+@pytest.mark.skipif(not REAL_DATA_FILE.exists(), reason="real course dataset is gitignored, bring-your-own")
+def test_load_events_reads_the_real_100_event_dataset():
+    events = load_events(REAL_DATA_FILE, limit=25)
+
+    assert len(events) == 25
+    assert events[0]["event_type"] == "Natural Disaster"
+    assert "root_cause" in events[0]

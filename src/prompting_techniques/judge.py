@@ -107,16 +107,40 @@ def compare_reports_with_verification(
     return response
 
 
-def main() -> None:
-    from prompting_techniques.techniques import chain_of_thought, few_shot, one_shot, zero_shot
+def compare_consecutive_pairs(
+    reports: dict[str, str], order: list[str], model: str = DEFAULT_MODEL, temperature: float = 0.0
+) -> dict[str, str]:
+    """One 2-way verification call per step in `order`, not one N-way call.
 
+    compare_reports_with_verification works reliably at 2 reports but
+    silently drops reports and loses track of labels past that (see
+    docs/one-shot-findings.md). Judging each technique against the one
+    immediately before it in the escalation (Zero -> One -> Few -> CoT
+    -> ToT) answers "what did this specific step buy you," rather than
+    "how does everything compare to one fixed baseline."
+    """
+    return {
+        f"{previous} -> {current}": compare_reports_with_verification(
+            {previous: reports[previous], current: reports[current]}, model=model, temperature=temperature
+        )
+        for previous, current in zip(order, order[1:])
+    }
+
+
+def main() -> None:
+    from prompting_techniques.techniques import chain_of_thought, few_shot, one_shot, tree_of_thought, zero_shot
+
+    order = ["Zero-Shot", "One-Shot", "Few-Shot", "Chain-of-Thought", "Tree-of-Thought"]
     reports = {
         "Zero-Shot": zero_shot.run(),
         "One-Shot": one_shot.run(),
         "Few-Shot": few_shot.run(),
         "Chain-of-Thought": chain_of_thought.run(),
+        "Tree-of-Thought": tree_of_thought.run(),
     }
-    print(compare_reports(reports))
+    for step, result in compare_consecutive_pairs(reports, order).items():
+        print(f"\n=== {step} ===")
+        print(result)
 
 
 if __name__ == "__main__":
