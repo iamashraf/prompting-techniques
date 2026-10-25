@@ -1,0 +1,39 @@
+services:
+  # Shares its model volume with the sibling research-assistant project
+  # (see the external volume below) -- whichever project pulls a model
+  # first, both see it. Nothing here duplicates a download.
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # One-shot: pulls the generator model and whichever judge model is
+  # requested, then exits. ollama pull is idempotent, so re-running
+  # `compose up` later is a fast no-op once a model is already present.
+  # Override JUDGE_MODEL to pull a different judge on demand, e.g.:
+  #   JUDGE_MODEL=phi3:mini podman compose up ollama-init
+  ollama-init:
+    image: ollama/ollama
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - GENERATOR_MODEL=${GENERATOR_MODEL:-llama3.1:8b}
+      - JUDGE_MODEL=${JUDGE_MODEL:-llama3.1:8b}
+    entrypoint: ["sh", "-c", "ollama pull $$GENERATOR_MODEL && ollama pull $$JUDGE_MODEL"]
+
+volumes:
+  # Points at the volume research-assistant's own docker-compose.yml
+  # already created -- not a new one. Pulling a model from either
+  # project makes it available to both.
+  ollama_data:
+    external: true
+    name: research-assistant_ollama_data

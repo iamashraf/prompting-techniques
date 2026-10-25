@@ -32,12 +32,24 @@ uv sync
 ### Prerequisites
 
 A running [Ollama](https://ollama.com) instance reachable at
-`http://localhost:11434` (locally installed, or a container — either
-works), with the model pulled:
+`http://localhost:11434`, with the model pulled. Easiest path:
 
 ```bash
-ollama pull llama3.1:8b
+./scripts/ensure_ollama.sh
 ```
+
+This reuses an already-running Ollama if you have one (e.g. from a
+sibling project) and starts nothing new; otherwise it starts one via
+`docker-compose.yml`, sharing the same model volume as the
+`research-assistant` project so nothing gets re-downloaded. Override
+which judge model gets pulled with `JUDGE_MODEL`:
+
+```bash
+JUDGE_MODEL=phi3:mini ./scripts/ensure_ollama.sh
+```
+
+Or set it up yourself with a plain `ollama pull llama3.1:8b` if you'd
+rather not use Docker/Podman at all.
 
 ### Running a technique
 
@@ -96,6 +108,8 @@ Tests are fast and network-free — they never call the model.
 ## Layout
 
 ```
+docker-compose.yml                 # optional local Ollama, sharing research-assistant's model volume
+scripts/ensure_ollama.sh           # starts Ollama only if nothing's already running
 data/                              # shared example scenario (CSV)
 runs/                              # generated prompt+response logs (gitignored)
 src/prompting_techniques/
