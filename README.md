@@ -123,6 +123,9 @@ Tests are fast and network-free — they never call the model.
   freezing results forward, not by reasoning better in any one step.
 - [Structured Output](docs/structured-output-findings.md) — perfect
   JSON shape, wrong totals, caught with three lines of Python.
+- [ReAct](docs/react-findings.md) — the only technique where the total
+  is correct by construction, not by luck — at the cost of writing and
+  securing real code instead of just a better prompt.
 
 ## Layout
 
@@ -148,6 +151,7 @@ src/prompting_techniques/
     self_consistency.py            # sample chain-of-thought N times, vote on the answer
     prompt_chaining.py             # a 4-step pipeline instead of one call
     structured_output.py           # JSON schema output, verified with plain Python
+    react.py                       # Thought/Action/Observation with a real calculator tool
 tests/
 ```
 
