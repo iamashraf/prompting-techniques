@@ -119,6 +119,8 @@ Tests are fast and network-free — they never call the model.
   mitigation choices, but that discipline didn't carry over to arithmetic.
 - [Self-Consistency](docs/self-consistency-findings.md) — a safety net
   that only shows its value once something is unstable enough to need it.
+- [Prompt Chaining](docs/prompt-chaining-findings.md) — correctness by
+  freezing results forward, not by reasoning better in any one step.
 
 ## Layout
 
@@ -142,6 +144,7 @@ src/prompting_techniques/
     chain_of_thought.py            # reason step by step, then write the report
     tree_of_thought.py             # generate multiple options, evaluate, then pick one
     self_consistency.py            # sample chain-of-thought N times, vote on the answer
+    prompt_chaining.py             # a 4-step pipeline instead of one call
 tests/
 ```
 
