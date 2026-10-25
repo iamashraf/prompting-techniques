@@ -48,9 +48,9 @@ uv run python -m prompting_techniques.techniques.zero_shot
 ```
 
 This prints the exact prompt sent to the model, the generated report,
-and the path of a full run log saved under `runs/` — one `.txt` file per
-run, containing the exact system prompt, user prompt, and response
-(gitignored: generated output, not source).
+and the path of a full run log saved under `runs/<technique>/` — one
+`.txt` file per run, containing the exact system prompt, user prompt,
+and response (gitignored: generated output, not source).
 
 ### Running the experiments
 
@@ -64,6 +64,16 @@ uv run python -m prompting_techniques.techniques.zero_shot_experiments
 
 These make real calls to your local model and can take a few minutes.
 
+### Comparing techniques
+
+Once two or more techniques exist, `judge.py` scores their baseline
+reports side by side (same 1-5 rubric the course used: Completeness,
+Business Reasoning, Structure, Actionability, Executive Readiness):
+
+```bash
+uv run python -m prompting_techniques.judge
+```
+
 ### Running tests
 
 ```bash
@@ -76,6 +86,8 @@ Tests are fast and network-free — they never call the model.
 
 - [Zero-Shot](docs/zero-shot-findings.md) — what the experiments actually
   showed, in plain terms.
+- [One-Shot](docs/one-shot-findings.md) — including a scored comparison
+  against Zero-Shot, and what the score missed.
 
 ## Layout
 
@@ -85,9 +97,13 @@ runs/                              # generated prompt+response logs (gitignored)
 src/prompting_techniques/
   scenario.py                      # loads the data, builds the shared business_context text
   run_log.py                       # persists every prompt+response under runs/
+  ollama_client.py                 # the one shared call to a local Ollama model
+  judge.py                         # LLM-as-judge: scores techniques' reports side by side
   techniques/
     zero_shot.py                   # the technique itself
     zero_shot_experiments.py       # hands-on experiments exploring its nuances
+    one_shot.py                    # zero-shot + exactly one worked example
+    one_shot_experiments.py        # experiments specific to adding an example
 tests/
 ```
 

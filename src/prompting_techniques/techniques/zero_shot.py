@@ -7,13 +7,9 @@ the right structure and reasoning. Every other technique in this repo is
 compared back against this baseline.
 """
 
-import requests
-
+from prompting_techniques.ollama_client import ask_ollama
 from prompting_techniques.run_log import save_run
 from prompting_techniques.scenario import build_business_context, load_events
-
-OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL = "llama3.1:8b"
 
 SYSTEM_PROMPT = """
 You are a Senior Supply Chain Risk Analyst.
@@ -39,31 +35,6 @@ Business Impact Assessment Report.
 3. Root Causes
 4. Recommended Mitigation Strategies
 """.strip()
-
-
-def ask_ollama(system: str | None, user: str, model: str = MODEL, temperature: float = 0.0) -> str:
-    print(f"--- sending to {model} (temperature={temperature}) ---")
-    if system is not None:
-        print(f"[system]\n{system}\n")
-    print(f"[user]\n{user}\n")
-
-    messages = []
-    if system is not None:
-        messages.append({"role": "system", "content": system})
-    messages.append({"role": "user", "content": user})
-
-    response = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": model,
-            "messages": messages,
-            "options": {"temperature": temperature},
-            "stream": False,
-        },
-        timeout=120,
-    )
-    response.raise_for_status()
-    return response.json()["message"]["content"]
 
 
 def run(temperature: float = 0.0) -> str:
