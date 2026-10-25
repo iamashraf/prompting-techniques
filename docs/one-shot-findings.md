@@ -43,6 +43,21 @@ One-Shot scored *higher* — 5/5 on completeness and structure — despite
 being the leaky, fabricated-recommendation report. The score rewarded
 how polished it looked, not whether it was grounded.
 
+We then tried two more judge models on that exact same pair
+(qwen2.5:1.5b, phi3:mini) — both missed it too; phi3:mini even
+preferred the fabricated report. Adding an explicit "Groundedness"
+criterion to the rubric didn't fix it either: the judge scored the
+fabricated report 5/5 on groundedness, praising how "specific" its
+claims looked without actually checking any of them.
+
+What did work: forcing the judge to list every claim and mark each one
+"supported" or "not supported" against the input data *before* scoring
+anything — the same step-by-step discipline Chain-of-Thought uses for
+arithmetic. That caught the fabrication immediately and correctly
+flipped the recommendation to Zero-Shot. The fix was never which model
+judges, or even which question you ask it — it's whether anything
+forces it to actually check, instead of rating a vibe.
+
 ## Takeaway
 
 One example buys style. It doesn't buy accuracy, and it doesn't buy

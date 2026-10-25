@@ -90,6 +90,8 @@ Tests are fast and network-free — they never call the model.
   against Zero-Shot, and what the score missed.
 - [Few-Shot](docs/few-shot-findings.md) — a lesson about example quality
   that mattered more than the technique itself.
+- [Chain-of-Thought](docs/chain-of-thought-findings.md) — the first
+  technique that actually fixed the arithmetic problem.
 
 ## Layout
 
@@ -106,6 +108,8 @@ src/prompting_techniques/
     zero_shot_experiments.py       # hands-on experiments exploring its nuances
     one_shot.py                    # zero-shot + exactly one worked example
     one_shot_experiments.py        # experiments specific to adding an example
+    few_shot.py                    # zero-shot + several worked examples
+    chain_of_thought.py            # reason step by step, then write the report
 tests/
 ```
 
