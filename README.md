@@ -88,6 +88,8 @@ Tests are fast and network-free — they never call the model.
   showed, in plain terms.
 - [One-Shot](docs/one-shot-findings.md) — including a scored comparison
   against Zero-Shot, and what the score missed.
+- [Few-Shot](docs/few-shot-findings.md) — a lesson about example quality
+  that mattered more than the technique itself.
 
 ## Layout
 
