@@ -29,14 +29,66 @@ section and the layout below to grow one module at a time.
 uv sync
 ```
 
-(Run instructions for individual techniques will be documented here as
-each one is built.)
+### Prerequisites
+
+A running [Ollama](https://ollama.com) instance reachable at
+`http://localhost:11434` (locally installed, or a container — either
+works), with the model pulled:
+
+```bash
+ollama pull llama3.1:8b
+```
+
+### Running a technique
+
+Each technique is a standalone, runnable module:
+
+```bash
+uv run python -m prompting_techniques.techniques.zero_shot
+```
+
+This prints the exact prompt sent to the model, the generated report,
+and the path of a full run log saved under `runs/` — one `.txt` file per
+run, containing the exact system prompt, user prompt, and response
+(gitignored: generated output, not source).
+
+### Running the experiments
+
+Most techniques have a companion `..._experiments.py` module that
+isolates one nuance or failure mode per function (e.g. does output
+change run-to-run? does the model invent numbers when data is missing?):
+
+```bash
+uv run python -m prompting_techniques.techniques.zero_shot_experiments
+```
+
+These make real calls to your local model and can take a few minutes.
+
+### Running tests
+
+```bash
+uv run pytest
+```
+
+Tests are fast and network-free — they never call the model.
+
+## Findings
+
+- [Zero-Shot](docs/zero-shot-findings.md) — what the experiments actually
+  showed, in plain terms.
 
 ## Layout
 
 ```
-src/prompting_techniques/   # library code
+data/                              # shared example scenario (CSV)
+runs/                              # generated prompt+response logs (gitignored)
+src/prompting_techniques/
+  scenario.py                      # loads the data, builds the shared business_context text
+  run_log.py                       # persists every prompt+response under runs/
+  techniques/
+    zero_shot.py                   # the technique itself
+    zero_shot_experiments.py       # hands-on experiments exploring its nuances
+tests/
 ```
 
-More structure (techniques/, scenarios/, an LLM client, etc.) will be
-documented here as it's built, not before.
+More techniques land here the same way, one reviewed step at a time.

@@ -20,3 +20,12 @@ def test_load_events_reads_the_shipped_sample_dataset():
 
     assert len(events) == 6
     assert events[0]["event_type"] == "Port Congestion"
+
+
+def test_build_business_context_keeps_known_acronyms_upper_case():
+    events = [{"revenue_at_risk_usd": "100"}]
+
+    context = build_business_context(events)
+
+    assert "Revenue At Risk USD: 100" in context
+    assert "Usd" not in context

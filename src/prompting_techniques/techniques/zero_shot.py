@@ -9,6 +9,7 @@ compared back against this baseline.
 
 import requests
 
+from prompting_techniques.run_log import save_run
 from prompting_techniques.scenario import build_business_context, load_events
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
@@ -40,15 +41,23 @@ Business Impact Assessment Report.
 """.strip()
 
 
-def ask_ollama(system: str, user: str, model: str = MODEL) -> str:
+def ask_ollama(system: str | None, user: str, model: str = MODEL, temperature: float = 0.0) -> str:
+    print(f"--- sending to {model} (temperature={temperature}) ---")
+    if system is not None:
+        print(f"[system]\n{system}\n")
+    print(f"[user]\n{user}\n")
+
+    messages = []
+    if system is not None:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": user})
+
     response = requests.post(
         OLLAMA_URL,
         json={
             "model": model,
-            "messages": [
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
+            "messages": messages,
+            "options": {"temperature": temperature},
             "stream": False,
         },
         timeout=120,
@@ -57,10 +66,15 @@ def ask_ollama(system: str, user: str, model: str = MODEL) -> str:
     return response.json()["message"]["content"]
 
 
-def run() -> str:
+def run(temperature: float = 0.0) -> str:
     business_context = build_business_context(load_events())
     user_prompt = USER_PROMPT_TEMPLATE.format(business_context=business_context)
-    return ask_ollama(SYSTEM_PROMPT, user_prompt)
+    response = ask_ollama(SYSTEM_PROMPT, user_prompt, temperature=temperature)
+
+    log_path = save_run("zero_shot", SYSTEM_PROMPT, user_prompt, response)
+    print(f"--- logged full run to {log_path} ---")
+
+    return response
 
 
 def main() -> None:
