@@ -1,0 +1,7 @@
+event_type,region,country,supplier_tier,severity_level,production_downtime_hours,shipment_delay_days,revenue_at_risk_usd,financial_impact_usd
+Port Congestion,Asia,Singapore,Tier-1,High,48,10,2500000,850000
+Supplier Failure,North America,Mexico,Tier-2,Critical,72,5,1800000,1200000
+Natural Disaster,Asia,Japan,Tier-1,Critical,96,14,4000000,2100000
+Labor Strike,Europe,Germany,Tier-2,Medium,24,3,600000,220000
+Customs Delay,Europe,France,Tier-3,Low,12,2,150000,45000
+Transportation Disruption,North America,United States,Tier-1,Medium,36,6,900000,310000
