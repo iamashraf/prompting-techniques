@@ -121,6 +121,8 @@ Tests are fast and network-free — they never call the model.
   that only shows its value once something is unstable enough to need it.
 - [Prompt Chaining](docs/prompt-chaining-findings.md) — correctness by
   freezing results forward, not by reasoning better in any one step.
+- [Structured Output](docs/structured-output-findings.md) — perfect
+  JSON shape, wrong totals, caught with three lines of Python.
 
 ## Layout
 
@@ -145,6 +147,7 @@ src/prompting_techniques/
     tree_of_thought.py             # generate multiple options, evaluate, then pick one
     self_consistency.py            # sample chain-of-thought N times, vote on the answer
     prompt_chaining.py             # a 4-step pipeline instead of one call
+    structured_output.py           # JSON schema output, verified with plain Python
 tests/
 ```
 
