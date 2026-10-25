@@ -117,6 +117,8 @@ Tests are fast and network-free — they never call the model.
   technique that actually fixed the arithmetic problem.
 - [Tree-of-Thought](docs/tree-of-thought-findings.md) — better-justified
   mitigation choices, but that discipline didn't carry over to arithmetic.
+- [Self-Consistency](docs/self-consistency-findings.md) — a safety net
+  that only shows its value once something is unstable enough to need it.
 
 ## Layout
 
@@ -139,6 +141,7 @@ src/prompting_techniques/
     few_shot.py                    # zero-shot + several worked examples
     chain_of_thought.py            # reason step by step, then write the report
     tree_of_thought.py             # generate multiple options, evaluate, then pick one
+    self_consistency.py            # sample chain-of-thought N times, vote on the answer
 tests/
 ```
 
